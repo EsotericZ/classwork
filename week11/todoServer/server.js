@@ -1,8 +1,11 @@
 const express = require('express');
 
-const PORT = process.env.PORT || 3001;
+const { todos, uuid } = require('./db/todos');
 
+const PORT = process.env.PORT || 3001;
 const app = express();
+
+app.use(express.static('public'))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,21 +23,6 @@ const checkText = (req, res, next) => {
     }
 };
 
-const todos = [
-    {
-        id: 1,
-        text: 'Call the DMV',
-    },
-    {
-        id: 2,
-        text: 'Eat Bugs',
-    },
-    {
-        id: 3,
-        text: 'Moon the moon',
-    }
-]
-
 app.get('/api/todos', (req, res) => {
     console.log(req.method, 'cj ftw');
 
@@ -45,10 +33,10 @@ app.post('/api/todos', checkText, (req, res) => {
     console.log(req.cj);
     const newTodo = {
         text: req.body.text,
-        id: todos.length + 1,
+        id: uuid(),
     };
     todos.push(newTodo);
-    res.send('success');
+    res.send(newTodo);
 })
 
 app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
