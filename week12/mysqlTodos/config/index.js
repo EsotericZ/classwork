@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'password',
-    database: 'toods_db'
+    database: 'todos_db'
 }).promise();
 
 module.exports = connection;
