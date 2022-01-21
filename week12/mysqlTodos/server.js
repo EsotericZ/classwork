@@ -7,6 +7,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.post('/api/users', async (req, res) => {
     const { username } = req.body;
@@ -51,9 +52,9 @@ app.post('/api/todos', async (req, res) => {
     }
     try {
         const insertQuery = 'INSERT INTO todos (task, userId) VALUES (?,?);';
-        const getTodoById = 'SELECT * FROM todos WHERE id = ?;';
+        const getTodoById = 'SELECT * FROM todos INNER JOIN users ON todos.userId = ? WHERE todos.id = ?;';
         const [result] = await connection.query(insertQuery, [task, userId]);
-        const [todosResult] = await connection.query(getTodoById, [result.insertId]);
+        const [todosResult] = await connection.query(getTodoById, [userId, result.insertId]);
         res.json(todosResult[0]);
     } catch (e) {
         res.status(400).json(e);
