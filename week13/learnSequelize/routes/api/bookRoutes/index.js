@@ -20,7 +20,38 @@ router.get('/:bookId', async (req, res) => {
     }
 });
 
-// Every route declared in this index.js will have /api/books prepended automatically
+router.patch('/:bookId', async (req, res) => {
+    const {
+        title,
+        author,
+        isbn,
+        pages,
+        edition,
+        isPaperback,
+    } = req.body;
+    try {
+        await Book.update(
+            {
+                title,
+                author,
+                isbn,
+                pages,
+                edition,
+                isPaperback, 
+            }, 
+            {
+                where: {
+                    id: req.params.bookId
+                }
+            }
+        );
+        const updatedBook = await Book.findByPk(req.params.bookId);
+        res.json(updatedBook);
+    } catch (e) {
+        res.json(e);
+    }
+});
+
 router.post('/', async (req, res) => {
     const { title, author } = req.body;
     try {
