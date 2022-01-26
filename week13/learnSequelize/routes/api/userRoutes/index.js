@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
         username,
         email,
         password,
+        numberOfPets,
     } = req.body;
 
     if(!username || !email || !password) {
@@ -32,12 +33,11 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = await User.create({
             username,
             email,
-            password: hashedPassword,
+            password,
+            numberOfPets,
         });
         res.json(newUser);
     } catch (e) {
@@ -61,7 +61,8 @@ router.patch('/:userId', async (req, res) => {
             {
                 where: {
                     id: req.params.userId
-                }
+                },
+                individualHooks: true,
             }
         );
         const updatedUser = await User.findByPk(req.params.userId);
@@ -107,6 +108,22 @@ router.post('/login', async (req, res) => {
         res.json({ message: 'You have logged in successfully'});
     } catch (e) {
         res.json(e)
+    }
+});
+
+router.get('/hasPets/:userId', async (req, res) => {
+    try {   
+        const user = await User.findByPk(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found'});
+        }
+        const doesHavePets = user.hasPets();
+        if (!doesHavePets) {
+            return res.status(400).json({ message: 'User has no pets'})
+        }
+        res.json({ message: 'User does have pets'})
+    } catch (e) {
+        res.json(e);
     }
 });
 
