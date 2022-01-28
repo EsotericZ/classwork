@@ -1,4 +1,4 @@
-const { Model, DataTypes } = require('sequelize');
+const { UUIDV4, Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const sequelize = require('../config');
 
@@ -13,6 +13,11 @@ class User extends Model {
 
 User.init(
     {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: UUIDV4,
+            primaryKey: true,
+        },
         username: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -37,13 +42,14 @@ User.init(
         },
         numberOfPets: {
             type: DataTypes.INTEGER,
-            default: 0,
+            defaultValue: 0,
         }
     },
     {
         sequelize,
         timestamps: false,
         modelName: 'User',
+        freezeTableName: true,
         hooks: {
             beforeCreate: async (user, options) => {
                 const salt = await bcrypt.genSalt(10);
