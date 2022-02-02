@@ -20,24 +20,60 @@ module.exports = {
         }
     },
     getAllUsers: async (req, res) => {
+        req.session.save(() => {
+            if (req.session.visitCount) {
+                req.session.visitCount++;
+            } else {
+                req.session.visitCount = 1;
+            }
+        })
         try {
             const usersData = await User.findAll({});
             const users = usersData.map(user => user.get({ plain: true }));
             res.render('allUsers', { 
                 users,
                 favoriteFood: 'Ice cream sammich',
+                visitCount: req.session.visitCount,
+                loggedInUser: req.session.user || null,
             });
         } catch(e) {
             res.json(e);
         }
     },
     getUserById: async (req, res) => {
+        req.session.save(() => {
+            if (req.session.visitCount) {
+                req.session.visitCount++;
+            } else {
+                req.session.visitCount = 1;
+            }
+        })
         try {
             const userData = await User.findByPk(req.params.userId);
             const user = userData.get({ plain: true });
             res.render('singleUser', {
-                user
+                user,
+                visitCount: req.session.visitCount,
             });
+        } catch (e) {
+            res.json(e);
+        }
+    },
+    login: async (req, res) => {
+        try {
+            // const userFound = await User.findOne({
+            //     where: {
+            //         email: req.body.email,
+            //     }
+            // });
+            const userData = await User.findOne({ email: req.body.email });
+            const userFound = userData.get({ plain: true });
+            if(userFound.password === req.body.password) {
+                req.session.save(() => {
+                    req.session.user = userFound;
+                    res.json({ success: true });
+                });
+            }
         } catch (e) {
             res.json(e);
         }
