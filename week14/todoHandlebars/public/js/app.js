@@ -1,10 +1,10 @@
 $(document).ready(function() {
-	const signinBtn = $('#emailField');
+	const emailField = $('#emailField');
 	const passwordField = $('#passwordField');
-	const signinBtn = $('#signinBtn');
+	const signupBtn = $('#signupBtn');
 	const logoutBtn = $('#logout');
 
-	signinBtn.on('click', async function(event) {
+	signupBtn.on('click', async function(event) {
 		event.preventDefault();
 		await $.post('/api/users/login', {
 			email: emailField.val().trim(),
