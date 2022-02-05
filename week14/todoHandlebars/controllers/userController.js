@@ -46,7 +46,11 @@ module.exports = {
 
 	login: async (req, res) => {
 		try {
-			const userData = await User.findOne({ email: req.body.email });
+			const userData = await User.findOne({ 
+				wher: { 
+					email: req.body.email 
+				}
+			});
 			const userFound = userData.get({ plain: true });
 
 			if (userFound.password === req.body.password) {
