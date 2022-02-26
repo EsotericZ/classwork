@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const { isEmail } = require('validator');
 
 const userSchema = new Schema({
     username: {
@@ -6,6 +7,21 @@ const userSchema = new Schema({
         trim: true,
         minLength: 4,
         maxLength: 8,
+        required: [true, 'Username is required'],
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        validator: {
+            validator: function(value) {
+                return isEmail(value);
+            },
+            message: function(userObject) {
+                return `${userObject.email} is not a valid email address`;
+            }
+        },
     },
     role: {
         type: String,
