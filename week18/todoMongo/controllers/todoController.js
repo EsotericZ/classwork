@@ -36,7 +36,7 @@ module.exports = {
     updateTodoById: async (req, res) => {
         const { todoId } = req.params;
         try {
-            const updatedTodo = await User.findByIdAndUpdate(
+            const updatedTodo = await Todo.findByIdAndUpdate(
                 todoId,
                 {...req.body},
                 {
@@ -53,7 +53,7 @@ module.exports = {
     deleteTodoById: async (req, res) => {
         const { todoId } = req.params;
         try {
-            const deletedTodo = await User.findByIdAndDelete(todoId);
+            const deletedTodo = await Todo.findByIdAndDelete(todoId);
             res.json(deletedTodo);
         } catch (e) {
             res.json(e)
