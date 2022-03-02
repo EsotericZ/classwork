@@ -9,6 +9,7 @@ const userSchema = new Schema({
         // maxLength: 8,
         required: [true, 'Username is required'],
     },
+
     email: {
         type: String,
         required: true,
@@ -23,6 +24,7 @@ const userSchema = new Schema({
             }
         },
     },
+
     role: {
         type: String,
         enum: ['Admin', 'Employee', 'Manager'],
@@ -46,6 +48,16 @@ const userSchema = new Schema({
         },
     }
 });
+
+// Model Methods
+userSchema.statics.findByRole = async function(role) {
+    return await this.find({ role });
+};
+
+// Instance Methods
+userSchema.methods.greeting = function() {
+    console.log(`Hi, my username is ${this.username}. My role is ${this.role}`);
+}
 
 const User = model('User', userSchema);
 

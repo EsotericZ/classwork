@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 const {
     Blog,
+    Like,
     User,
     Todo,
 } = require('./model');
@@ -9,6 +10,7 @@ const {
 const seedDb = async () => {
     await mongoose.connect('mongodb://localhost:27017/todoMongoDB');
     await Blog.deleteMany({});
+    await Like.deleteMany({});
     await User.deleteMany({});
     await Todo.deleteMany({});
 
@@ -16,12 +18,12 @@ const seedDb = async () => {
         { 
             username: faker.company.companyName(),
             email: faker.internet.email(),
-            role: 'Employee',
+            role: 'Admin',
         },
         { 
             username: faker.company.companyName(),
             email: faker.internet.email(),
-            role: 'Employee',
+            role: 'Admin',
         },
         { 
             username: faker.company.companyName(),
@@ -89,28 +91,99 @@ const seedDb = async () => {
 
     const blogsToCreate = [
         { 
-            text: faker.lorem.paragraph(),
+            description: faker.lorem.paragraph(),
             userId: users[Math.floor(Math.random() * users.length)]._id,
         },
         { 
-            text: faker.lorem.paragraph(),
+            description: faker.lorem.paragraph(),
             userId: users[Math.floor(Math.random() * users.length)]._id,
         },
         { 
-            text: faker.lorem.paragraph(),
-            userId: users[Math.floor(Math.random() * users.length)]._id,
-        },
-        { 
-            text: faker.lorem.paragraph(),
-            userId: users[Math.floor(Math.random() * users.length)]._id,
-        },
-        { 
-            text: faker.lorem.paragraph(),
+            description: faker.lorem.paragraph(),
             userId: users[Math.floor(Math.random() * users.length)]._id,
         },
     ];
 
     const blogs = await Blog.insertMany(blogsToCreate);
+
+    const likesToCreate = [
+        {
+            userId: users[0]._id,
+        },
+        {
+            userId: users[0]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+        {
+            userId: users[Math.floor(Math.random() * users.length)]._id,
+        },
+    ];
+
+    const[like1, like2] = await Like.insertMany(likesToCreate);
+    const firstBlog = blogs[0];
+
+    // Add a like
+    const updatedBlog = await Blog.findByIdAndUpdate(
+        firstBlog._id,
+        {
+            $addToSet: {
+                likeIds: [like1, like1]
+            },
+        },
+        {
+            new: true,
+        }
+    ).populate({
+        path: 'likeIds',
+        populate: 'userId'   
+    });
+
+    console.log('Add a like', updatedBlog.likeIds)
+
+    // Remove a like
+    const updatedBlogPartTwo = await Blog.findByIdAndUpdate(
+        firstBlog._id,
+        {
+            $pull: {
+                likeIds: like1._id,
+            },
+        },
+        {
+            new: true,
+        }
+    ).populate({
+        path: 'likeIds',
+        populate: 'userId'   
+    });
+
+    console.log('Remove a like', updatedBlogPartTwo.likeIds)
+
+    // firstBlog.likeIds.push(like1);
+    // firstBlog.likeIds.push(like2);
+
+    // await firstBlog.save();
+
+    // console.log(firstBlog);
+
+    const employees = await User.findByRole('Employee');
+    employees.forEach(employee => employee.greeting());
 
     process.exit(0);
 };

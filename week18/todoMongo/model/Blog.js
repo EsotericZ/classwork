@@ -5,10 +5,13 @@ const blogSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
-    text: {
-        type: String,
-        required: true,
-    },
+    likeIds: [ 
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Like',
+        }
+    ],
+    description: String,
 });
 
 const Blog = model('Blog', blogSchema);

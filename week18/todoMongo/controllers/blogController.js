@@ -2,10 +2,10 @@ const { Blog } =require('../model');
 
 module.exports = {
     createBlog: async (req, res) => {
-        const { text, userId } = req.body;
+        const { description, userId } = req.body;
         try {
             const newBlog = await Blog.create({
-                text,
+                description,
                 userId,
             });
             res.json(newBlog);
