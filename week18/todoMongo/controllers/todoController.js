@@ -2,11 +2,11 @@ const { Todo } =require('../model');
 
 module.exports = {
     createTodo: async (req, res) => {
-        const { text, completed } = req.body;
+        const { text, userId } = req.body;
         try {
             const newTodo = await Todo.create({
                 text,
-                completed,
+                userId,
             });
             res.json(newTodo);
         } catch (e) {
@@ -16,7 +16,10 @@ module.exports = {
 
     getAllTodos: async (req, res) => {
         try {
-            const todos = await Todo.find();
+            const todos = await Todo.find().populate({
+                path: 'userId', 
+                select: '-role -powerLevel -email -hobbies'
+            });
             res.json(todos);
         } catch (e) {
             res.json(e);
