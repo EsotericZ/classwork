@@ -2,6 +2,8 @@ const { Schema, model } = require('mongoose');
 const { isEmail } = require('validator');
 
 const userSchema = new Schema({
+    firstName: String,
+    lastName: String,
     username: {
         type: String,
         trim: true,
@@ -29,25 +31,36 @@ const userSchema = new Schema({
         type: String,
         enum: ['Admin', 'Employee', 'Manager'],
     },
-    powerLevel: {
-        type: Number,
-        min: 1,
-        max: 100000000,
-    },
-    hobbies: [ String ],
-    twoFavoriteCryptos: {
-        firstFavorite: {
-            type: String,
-            uppercase: true,
-            trim: true,
-        },
-        secondFavorite: {
-            type: String,
-            uppercase: true,
-            trim: true,
-        },
-    }
+    // powerLevel: {
+    //     type: Number,
+    //     min: 1,
+    //     max: 100000000,
+    // },
+    // hobbies: [ String ],
+    // twoFavoriteCryptos: {
+    //     firstFavorite: {
+    //         type: String,
+    //         uppercase: true,
+    //         trim: true,
+    //     },
+    //     secondFavorite: {
+    //         type: String,
+    //         uppercase: true,
+    //         trim: true,
+    //     },
+    // }
 });
+
+// Virtual
+userSchema.virtual('fullName').get(function() {
+    return `${this.firstName} ${this.lastName}`;
+});
+
+userSchema.virtual('fullName').set(function(currentValueBeingSet, theObjectWeCallSetOn, documentBeingSaved) {
+    console.log(currentValueBeingSet, 60)
+    console.log(theObjectWeCallSetOn, 61)
+    console.log(documentBeingSaved, 62)
+})
 
 // Model Methods
 userSchema.statics.findByRole = async function(role) {
