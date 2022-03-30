@@ -7,4 +7,8 @@ const connection = mysql.createConnection({
     database: 'classlist_db'
 });
 
-module.exports = connection;
+const newD = () => {
+    
+}
+
+module.exports = connection, newD;
