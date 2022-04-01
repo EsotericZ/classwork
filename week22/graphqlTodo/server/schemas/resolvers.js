@@ -17,10 +17,11 @@ const resolvers = {
     },
 
     Mutation: {
-        createUser: async (_root, { firstName, lastName, password }) => {
+        createUser: async (_root, { firstName, lastName, email, password }) => {
             return await User.create({
                 firstName,
                 lastName,
+                email,
                 password,
             });
         },

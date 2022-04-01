@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useQuery } from '@apollo/client';
+import { Routes, Route } from 'react-router-dom';
+import { Login } from './Login';
+import { FETCH_TODOS } from './graphql/queries/fetchTodos';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const { data, loading, error } = useQuery(FETCH_TODOS);
+
+  if (error) {
+    return <h1>{error}</h1>;
+  }
+
+  return loading ?
+    <h1>Loading...</h1>
+    :
+    <div>
+      <Routes>
+        <Route 
+          path='/'
+          element={<Login />}
+        />
+        <Route 
+          path='/success'
+          element={<h1>WAGMI</h1>}
+        />
+      </Routes>
     </div>
-  );
 }
 
 export default App;
